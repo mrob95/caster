@@ -3,11 +3,12 @@ Created on Sep 1, 2015
 
 @author: synkarius
 '''
-from dragonfly import Repeat, Function, Dictation, Choice, MappingRule
+from dragonfly import Repeat, Function, FocusWindow, BringApp, FocusWindow
+from dragonfly import Dictation, Choice, MappingRule, Clipboard, Playback
+from caster.lib.actions import Key, Text, Mouse
 
 from caster.lib import context, navigation, alphanumeric, textformat, text_utils
 from caster.lib import control
-from caster.lib.actions import Key, Mouse
 from caster.lib.dfplus.additions import IntegerRefST
 from caster.lib.dfplus.merge.ccrmerger import CCRMerger
 from caster.lib.dfplus.merge.mergerule import MergeRule
@@ -16,20 +17,25 @@ from caster.lib.dfplus.state.actions2 import UntilCancelled
 from caster.lib.dfplus.state.short import L, S, R
 from dragonfly.actions.action_mimic import Mimic
 from caster.ccr.standard import SymbolSpecs
+from caster.lib import settings, utilities
+
+from caster.user.latex import book_citation_generator, bibtexer
+from caster.user.window_switcher import window_switcher
+from caster.user.personal import personal
 
 _NEXUS = control.nexus()
 
-
 class NavigationNon(MappingRule):
     mapping = {
-        "<direction> <time_in_seconds>":
-            AsynchronousAction(
-                [L(S(["cancel"], Key("%(direction)s"), consume=False))],
-                repetitions=1000,
-                blocking=False),
+        # "<direction> <time_in_seconds>":
+        #     AsynchronousAction(
+        #         [L(S(["cancel"], Key("%(direction)s"), consume=False))],
+        #         repetitions=1000,
+        #         blocking=False),
         "erase multi clipboard":
             R(Function(navigation.erase_multi_clipboard, nexus=_NEXUS),
               rdescript="Erase Multi Clipboard"),
+
         "find":
             R(Key("c-f"), rdescript="Find"),
         "find next [<n>]":
@@ -49,12 +55,11 @@ class NavigationNon(MappingRule):
         "[show] context menu":
             R(Key("s-f10"), rdescript="Context Menu"),
         "squat":
-            R(Function(navigation.left_down, nexus=_NEXUS), rdescript="Mouse: Left Down"),
+            R(Mouse("left:down"), rdescript="Mouse: Left Down"),
         "bench":
-            R(Function(navigation.left_up, nexus=_NEXUS), rdescript="Mouse: Left Up"),
+            R(Mouse("left:up"), rdescript="Mouse: Left Down"),
         "kick":
-            R(Function(navigation.left_click, nexus=_NEXUS),
-              rdescript="Mouse: Left Click"),
+            R(Playback([(["mouse", "click"], 0.0)])),
         "kick mid":
             R(Function(navigation.middle_click, nexus=_NEXUS),
               rdescript="Mouse: Middle Click"),
@@ -74,18 +79,14 @@ class NavigationNon(MappingRule):
         "colic":
             R(Key("control:down") + Mouse("left") + Key("control:up"),
               rdescript="Mouse: Ctrl + Left Click"),
-        "garb [<nnavi500>]":
-            R(Mouse("left") + Mouse("left") + Function(
-                navigation.stoosh_keep_clipboard,
-                nexus=_NEXUS),
-              rdescript="Highlight @ Mouse + Copy"),
-        "drop [<nnavi500>]":
-            R(Mouse("left") + Mouse("left") + Function(
-                navigation.drop_keep_clipboard,
-                nexus=_NEXUS,
-                capitalization=0,
-                spacing=0),
-              rdescript="Highlight @ Mouse + Paste"),
+        # "garb [<nnavi500>]":
+        #     R(Mouse("left") + Mouse("left") + Function(
+        #         navigation.stoosh_keep_clipboard, nexus=_NEXUS),
+        #         rdescript="Highlight @ Mouse + Copy"),
+        # "drop [<nnavi500>]":
+        #     R(Mouse("left") + Mouse("left") + Function(
+        #         navigation.drop_keep_clipboard, nexus=_NEXUS, capitalization=0, spacing=0),
+        #       rdescript="Highlight @ Mouse + Paste"),
         "sure stoosh":
             R(Key("c-c"), rdescript="Simple Copy"),
         "sure cut":
@@ -98,14 +99,21 @@ class NavigationNon(MappingRule):
             R(Key("c-y"), rdescript="Redo")*Repeat(extra="n"),
         "refresh":
             R(Key("c-r"), rdescript="Refresh"),
-        "maxiwin":
-            R(Key("w-up"), rdescript="Maximize Window"),
+        # "maxiwin":
+        #     R(Key("w-up"), rdescript="Maximize Window"),
         "move window":
             R(Key("a-space, r, a-space, m"), rdescript="Move Window"),
-        "window (left | lease) [<n>]":
-            R(Key("w-left"), rdescript="Window Left")*Repeat(extra="n"),
-        "window (right | ross) [<n>]":
-            R(Key("w-right"), rdescript="Window Right")*Repeat(extra="n"),
+
+        "window <direction> [<direction2>]":
+            R(Key("win:down, %(direction)s/15, %(direction2)s, win:up"), rdescript="Window adjustment"),
+                    # Window Management
+        'minimize':
+            Playback([(["minimize", "window"], 0.0)]),
+        'maximize':
+            Playback([(["maximize", "window"], 0.0)]),
+        "remax":
+            R(Key("a-space/10,r/10,a-space/10,x"), rdescript="Force Maximize"),
+
         "monitor (left | lease) [<n>]":
             R(Key("sw-left"), rdescript="Monitor Left")*Repeat(extra="n"),
         "monitor (right | ross) [<n>]":
@@ -120,8 +128,7 @@ class NavigationNon(MappingRule):
             R(Key("c-pgup"), rdescript="Previous Tab")*Repeat(extra="n"),
         "close tab [<n>]":
             R(Key("c-w/20"), rdescript="Close Tab")*Repeat(extra="n"),
-        "elite translation <text>":
-            R(Function(alphanumeric.elite_text), rdescript="1337 Text"),
+
     }
 
     extras = [
@@ -161,66 +168,61 @@ class NavigationNon(MappingRule):
 
 class Navigation(MergeRule):
     non = NavigationNon
-    pronunciation = CCRMerger.CORE[1]
+    pronunciation = "navigation"
 
     mapping = {
     # "periodic" repeats whatever comes next at 1-second intervals until "cancel" is spoken or 100 tries occur
-        "periodic":
-            ContextSeeker(forward=[L(S(["cancel"], lambda: None),
-            S(["*"], lambda fnparams: UntilCancelled(Mimic(*filter(lambda s: s != "periodic", fnparams)), 1).execute(),
-            use_spoken=True))]),
+        # "periodic":
+        #     ContextSeeker(forward=[L(S(["cancel"], lambda: None),
+        #     S(["*"], lambda fnparams: UntilCancelled(Mimic(*filter(lambda s: s != "periodic", fnparams)), 1).execute(),
+        #     use_spoken=True))]),
     # VoiceCoder-inspired -- these should be done at the IDE level
-        "fill <target>":
-            R(Key("escape, escape, end"), show=False) +
-            AsynchronousAction([L(S(["cancel"], Function(context.fill_within_line, nexus=_NEXUS)))],
-            time_in_seconds=0.2, repetitions=50, rdescript="Fill" ),
-        "jump in":
-            AsynchronousAction([L(S(["cancel"], context.nav, ["right", "(~[~{~<"]))],
-            time_in_seconds=0.1, repetitions=50, rdescript="Jump: In"),
-        "jump out":
-            AsynchronousAction([L(S(["cancel"], context.nav, ["right", ")~]~}~>"]))],
-            time_in_seconds=0.1, repetitions=50, rdescript="Jump: Out"),
-        "jump back":
-            AsynchronousAction([L(S(["cancel"], context.nav, ["left", "(~[~{~<"]))],
-            time_in_seconds=0.1, repetitions=50, rdescript="Jump: Back"),
-        "jump back in":
-            AsynchronousAction([L(S(["cancel"], context.nav, ["left", "(~[~{~<"]))],
-            finisher=Key("right"), time_in_seconds=0.1, repetitions=50, rdescript="Jump: Back In" ),
+        # "fill <target>":
+        #     R(Key("escape, escape, end"), show=False) +
+        #     AsynchronousAction([L(S(["cancel"], Function(context.fill_within_line, nexus=_NEXUS)))],
+        #     time_in_seconds=0.2, repetitions=50, rdescript="Fill" ),
+        # "jump in":
+        #     AsynchronousAction([L(S(["cancel"], context.nav, ["right", "(~[~{~<"]))],
+        #     time_in_seconds=0.1, repetitions=50, rdescript="Jump: In"),
+        # "jump out":
+        #     AsynchronousAction([L(S(["cancel"], context.nav, ["right", ")~]~}~>"]))],
+        #     time_in_seconds=0.1, repetitions=50, rdescript="Jump: Out"),
+        # "jump back":
+        #     AsynchronousAction([L(S(["cancel"], context.nav, ["left", "(~[~{~<"]))],
+        #     time_in_seconds=0.1, repetitions=50, rdescript="Jump: Back"),
+        # "jump back in":
+        #     AsynchronousAction([L(S(["cancel"], context.nav, ["left", "(~[~{~<"]))],
+        #     finisher=Key("right"), time_in_seconds=0.1, repetitions=50, rdescript="Jump: Back In" ),
 
     # keyboard shortcuts
-        'save':
+        'save [file]':
             R(Key("c-s"), rspec="save", rdescript="Save"),
         'shock [<nnavi50>]':
             R(Key("enter"), rspec="shock", rdescript="Enter")* Repeat(extra="nnavi50"),
 
-        "(<mtn_dir> | <mtn_mode> [<mtn_dir>]) [(<nnavi500> | <extreme>)]":
+        "(<mtn_dir> | <mtn_mode> [<mtn_dir>]) [(<nnavi50> | <extreme>)]":
             R(Function(text_utils.master_text_nav), rdescript="Keyboard Text Navigation"),
-
-        "shift click":
-            R(Key("shift:down") + Mouse("left") + Key("shift:up"),
-              rdescript="Mouse: Shift Click"),
 
         "stoosh [<nnavi500>]":
             R(Function(navigation.stoosh_keep_clipboard, nexus=_NEXUS), rspec="stoosh", rdescript="Copy"),
-        "cut [<nnavi500>]":
-            R(Function(navigation.cut_keep_clipboard, nexus=_NEXUS), rspec="cut", rdescript="Cut"),
+        "cutter [<nnavi500>]":
+            R(Function(navigation.stoosh_keep_clipboard, nexus=_NEXUS, key="x"), rspec="cut", rdescript="Cut"),
+
         "spark [<nnavi500>] [(<capitalization> <spacing> | <capitalization> | <spacing>) (bow|bowel)]":
             R(Function(navigation.drop_keep_clipboard, nexus=_NEXUS), rspec="spark", rdescript="Paste"),
 
-        "splat [<splatdir>] [<nnavi10>]":
-            R(Key("c-%(splatdir)s"), rspec="splat", rdescript="Splat") * Repeat(extra="nnavi10"),
         "deli [<nnavi50>]":
-            R(Key("del/5"), rspec="deli", rdescript="Delete") * Repeat(extra="nnavi50"),
+            R(Key("del"), rspec="deli", rdescript="Delete") * Repeat(extra="nnavi50"),
         "clear [<nnavi50>]":
-            R(Key("backspace/5:%(nnavi50)d"), rspec="clear", rdescript="Backspace"),
-        SymbolSpecs.CANCEL:
-            R(Key("escape"), rspec="cancel", rdescript="Cancel Action"),
+            R(Key("backspace:%(nnavi50)d"), rspec="clear", rdescript="Backspace"),
+        # SymbolSpecs.CANCEL:
+        #     R(Key("escape"), rspec="cancel", rdescript="Cancel Action"),
 
 
         "shackle":
-            R(Key("home/5, s-end"), rspec="shackle", rdescript="Select Line"),
+            R(Key("home, s-end"), rspec="shackle", rdescript="Select Line"),
         "(tell | tau) <semi>":
-            R(Function(navigation.next_line), rspec="tell dock", rdescript="Complete Line"),
+            R(Key("end, %(semi)s enter"), rspec="tell dock", rdescript="Complete Line"),
         "duple [<nnavi50>]":
             R(Function(navigation.duple_keep_clipboard), rspec="duple", rdescript="Duplicate Line"),
         "Kraken":
@@ -229,27 +231,32 @@ class Navigation(MergeRule):
     # text formatting
         "set [<big>] format (<capitalization> <spacing> | <capitalization> | <spacing>) (bow|bowel)":
             R(Function(textformat.set_text_format), rdescript="Set Text Format"),
-        "clear caster [<big>] formatting":
+        "clear caster formatting":
             R(Function(textformat.clear_text_format), rdescript="Clear Caster Formatting"),
-        "peek [<big>] format":
-            R(Function(textformat.peek_text_format), rdescript="Peek Format"),
+        # "peek format":
+        #     R(Function(textformat.peek_text_format), rdescript="Peek Format"),
         "(<capitalization> <spacing> | <capitalization> | <spacing>) (bow|bowel) <textnv> [brunt]":
             R(Function(textformat.master_format_text), rdescript="Text Format"),
-        "[<big>] format <textnv>":
+        "[<big>] (format | say) <textnv>":
             R(Function(textformat.prior_text_format), rdescript="Last Text Format"),
-        "<word_limit> [<big>] format <textnv>":
+        "<word_limit> format <textnv>":
             R(Function(textformat.partial_format_text), rdescript="Partial Text Format"),
 
         "hug <enclosure>":
             R(Function(text_utils.enclose_selected), rdescript="Enclose text "),
-        "dredge":
-            R(Key("a-tab"), rdescript="Alt-Tab"),
+        # "dredge":
+        #     R(Key("a-tab"), rdescript="Alt-Tab"),
+
+        #Mine
+        "splat [<splatdir>] [<nnavi10>]":
+            R(Key("c-%(splatdir)s"), rspec="splat", rdescript="Splat") * Repeat(extra="nnavi10"),
+
 
     }
 
     extras = [
         IntegerRefST("nnavi10", 1, 11),
-        IntegerRefST("nnavi50", 1, 50),
+        IntegerRefST("nnavi50", 1, 20),
         IntegerRefST("nnavi500", 1, 500),
         Dictation("textnv"),
         Choice(
@@ -264,7 +271,7 @@ class Navigation(MergeRule):
         Choice("capitalization", {
             "yell": 1,
             "tie": 2,
-            "Gerrish": 3,
+            "(Gerrish | camel)": 3,
             "sing": 4,
             "laws": 5
         }),
@@ -277,11 +284,14 @@ class Navigation(MergeRule):
                 "pebble": 4,
                 "incline": 5,
                 "dissent": 6,
-                "descent": 6
+                "descent": 6,
+                "list": 7,
+                "dictionary": 8,
             }),
         Choice("semi", {
-            "dock": ";",
-            "doc": ";",
+            "dock": "semicolon, ",
+            "doc": "semicolon, ",
+            "collie": "colon, ",
             "sink": ""
         }),
         Choice("word_limit", {
@@ -300,13 +310,14 @@ class Navigation(MergeRule):
         Choice("extreme", {
             "Wally": "way",
         }),
+        Choice("splatdir", {
+            "lease":"backspace",
+            "ross":"delete",
+        }),
         Choice("big", {
             "big": True,
         }),
-        Choice("splatdir", {
-            "lease": "backspace",
-            "ross": "delete",
-        }),
+
     ]
 
     defaults = {
@@ -317,11 +328,12 @@ class Navigation(MergeRule):
         "capitalization": 0,
         "spacing": 0,
         "mtn_mode": None,
-        "mtn_dir": "right",
+        "mtn_dir": "left",
         "extreme": None,
+        "splatdir":"backspace",
         "big": False,
-        "splatdir": "backspace",
     }
 
+if settings.SETTINGS["core"]["navigation"]:
+    control.nexus().merger.add_global_rule(Navigation())
 
-control.nexus().merger.add_global_rule(Navigation())

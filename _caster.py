@@ -3,14 +3,13 @@
 main Caster module
 Created on Jun 29, 2014
 '''
-
 import logging
 logging.basicConfig()
 
-import time
+import time, threading
 from dragonfly import (Function, Grammar, Playback, Dictation, Choice, Pause)
+from caster.lib.actions import Key, Text, Mouse
 from caster.ccr.standard import SymbolSpecs
-
 
 def _wait_for_wsr_activation():
     count = 1
@@ -27,31 +26,31 @@ def _wait_for_wsr_activation():
 
 _NEXUS = None
 
+
 from caster.lib import settings  # requires nothing
 settings.WSR = __name__ == "__main__"
-from caster.lib import utilities  # requires settings
+from caster.lib import utilities # requires settings
 if settings.WSR:
     _wait_for_wsr_activation()
     SymbolSpecs.set_cancel_word("escape")
 from caster.lib import control
 _NEXUS = control.nexus()
 
+
 from caster.apps import *
 from caster.lib.asynch import *
 from caster.lib import context
-from caster.lib.actions import Key
 import caster.lib.dev.dev
 from caster.lib.asynch.sikuli import sikuli
 from caster.lib import navigation
 navigation.initialize_clipboard(_NEXUS)
 from caster.lib.dfplus.state.short import R
 from caster.lib.dfplus.additions import IntegerRefST
-
 from caster.lib.dfplus.merge.mergepair import MergeInf
 from caster.ccr import *
 from caster.ccr.recording.again import Again
-from caster.ccr.recording.bringme import bring_rule
 from caster.ccr.recording.alias import Alias
+from caster.ccr.recording.bringme import bring_rule
 from caster.ccr.recording import history
 from caster.lib.dev import dev
 from caster.lib.dfplus.hint.nodes import css
@@ -59,6 +58,7 @@ from caster.user.filters.examples import scen4, modkeysup
 from caster import user
 from caster.lib.dfplus.merge.mergerule import MergeRule
 from caster.lib.dfplus.merge import gfilter
+from caster.lib.actions import Key, Text, Mouse
 
 
 def change_monitor():
@@ -66,7 +66,6 @@ def change_monitor():
         Playback([(["monitor", "select"], 0.0)]).execute()
     else:
         print("This command requires SikuliX to be enabled in the settings file")
-
 
 class MainRule(MergeRule):
     @staticmethod
@@ -84,9 +83,8 @@ class MainRule(MergeRule):
         return Choice("name2", choices)
 
     mapping = {
-        # Dragon NaturallySpeaking commands moved to dragon.py
-
-        # hardware management
+        # Caster Dependencies Management
+        # Hardware Management
         "volume <volume_mode> [<n>]":
             R(Function(navigation.volume_control, extra={'n', 'volume_mode'}),
               rdescript="Volume Control"),
@@ -94,17 +92,7 @@ class MainRule(MergeRule):
             R(Key("w-p") + Pause("100") + Function(change_monitor),
               rdescript="Change Monitor"),
 
-        # window management
-        'minimize':
-            Playback([(["minimize", "window"], 0.0)]),
-        'maximize':
-            Playback([(["maximize", "window"], 0.0)]),
-        "remax":
-            R(Key("a-space/10,r/10,a-space/10,x"), rdescript="Force Maximize"),
-
-        # passwords
-
-        # mouse alternatives
+        # Mouse Alternatives
         "legion [<monitor>]":
             R(Function(navigation.mouse_alternates, mode="legion", nexus=_NEXUS),
               rdescript="Activate Legion"),
@@ -115,13 +103,15 @@ class MainRule(MergeRule):
             R(Function(navigation.mouse_alternates, mode="douglas", nexus=_NEXUS),
               rdescript="Activate Douglas Grid"),
 
-        # ccr de/activation
+        # CCR De/Activation
         "<enable> <name>":
             R(Function(_NEXUS.merger.global_rule_changer(), save=True),
               rdescript="Toggle CCR Module"),
         "<enable> <name2>":
             R(Function(_NEXUS.merger.selfmod_rule_changer(), save=True),
               rdescript="Toggle sm-CCR Module"),
+
+        
     }
     extras = [
         IntegerRefST("n", 1, 50),
@@ -143,6 +133,7 @@ class MainRule(MergeRule):
     ]
     defaults = {"n": 1, "nnv": 1, "text": "", "volume_mode": "setsysvolume", "enable": -1}
 
+# t.join()
 
 grammar = Grammar('general')
 main_rule = MainRule()
@@ -171,8 +162,9 @@ print("*- Starting " + settings.SOFTWARE_NAME + " -*")
 
 if settings.WSR:
     import pythoncom
+
     print("Windows Speech Recognition is garbage; it is " \
-        +"recommended that you not run Caster this way. ")
+          + "recommended that you not run Caster this way. ")
     while True:
         pythoncom.PumpWaitingMessages()  # @UndefinedVariable
         time.sleep(.1)

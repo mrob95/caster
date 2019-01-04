@@ -1,7 +1,7 @@
 from dragonfly import Choice, Repeat
+from caster.lib.actions import Key, Text, Mouse
 
 from caster.lib import control
-from caster.lib.actions import Key, Text
 from caster.lib.dfplus.additions import IntegerRefST
 from caster.lib.dfplus.merge.ccrmerger import CCRMerger
 from caster.lib.dfplus.merge.mergerule import MergeRule
@@ -9,25 +9,29 @@ from caster.lib.dfplus.state.short import R
 
 
 class Punctuation(MergeRule):
-    pronunciation = CCRMerger.CORE[3]
+    pronunciation = "punctuation"
 
     mapping = {
         "semper":
             R(Key("semicolon"), rdescript="Semicolon"),
         "quotes":
-            R(Key("dquote,dquote,left"), rdescript="Quotation Marks"),
+            R(Key("dquote"), rdescript="Quotation Marks"),
         "thin quotes":
             R(Key("apostrophe,apostrophe,left"), rdescript="Thin Quotation Marks"),
-        "[is] greater than":
-            R(Key("rangle"), rdescript="> Comparison"),
-        "[is] less than":
-            R(Key("langle"), rdescript="< Comparison"),
-        "[is] greater [than] [or] equal [to]":
-            R(Key("rangle, equals"), rdescript=">= Comparison"),
-        "[is] less [than] [or] equal [to]":
-            R(Key("langle, equals"), rdescript="<= Comparison"),
-        "[is] equal to":
-            R(Key("equals,equals"), rdescript="Equality"),
+        "[<long>] greater than":
+            R(Text("%(long)s" + ">" + "%(long)s"), rdescript="> Comparison"),
+        "[<long>] less than":
+            R(Text("%(long)s" + "<" + "%(long)s"), rdescript="< Comparison"),
+        "[<long>] greater [than] [or] equal [to]":
+            R(Text("%(long)s" + ">=" + "%(long)s"), rdescript=">= Comparison"),
+        "[<long>] less [than] [or] equal [to]":
+            R(Text("%(long)s" + "<=" + "%(long)s"), rdescript="<= Comparison"),
+        "[<long>] equal to":
+            R(Text("%(long)s" + "==" + "%(long)s"), rdescript="Equality"),
+        "[<long>] not equal":
+            R(Text("%(long)s" + "!=" + "%(long)s")),
+        "[<long>] equals":
+            R(Text("%(long)s" + "=" + "%(long)s"), rdescript="Equals Sign"),
         "prekris":
             R(Key("lparen, rparen, left"), rdescript="Parentheses"),
         "brax":
@@ -36,8 +40,6 @@ class Punctuation(MergeRule):
             R(Key("lbrace, rbrace, left"), rdescript="Curly Braces"),
         "angle":
             R(Key("langle, rangle, left"), rdescript="Angle Brackets"),
-        "[<long>] equals":
-            R(Text("%(long)s" + "=" + "%(long)s"), rdescript="Equals Sign"),
         "[<long>] plus":
             R(Text("%(long)s" + "+" + "%(long)s"), rdescript="Plus Sign"),
         "[<long>] minus":
@@ -48,7 +50,7 @@ class Punctuation(MergeRule):
             R(Key("space"), rdescript="Space")*Repeat(extra="npunc"),
         "clamor":
             R(Text("!"), rdescript="Exclamation Mark"),
-        "deckle":
+        "(deckle | colon)":
             R(Text(":"), rdescript="Colon"),
         "starling":
             R(Key("asterisk"), rdescript="Asterisk"),
@@ -57,10 +59,10 @@ class Punctuation(MergeRule):
         "comma":
             R(Text(","), rdescript="Comma"),
         "carrot":
-            R(Text("^"), rdescript="Carat"),
-        "(period | dot)":
+            R(Text("^"), rdescript="Carat"),  
+        "point":
             R(Text("."), rdescript="Dot"),
-        "atty":
+        "at sign":
             R(Text("@"), rdescript="At Sign"),
         "hash tag":
             R(Text("#"), rdescript="Hash Tag"),
@@ -72,32 +74,36 @@ class Punctuation(MergeRule):
             R(Text("\\"), rdescript="Back Slash"),
         "slash":
             R(Text("/"), rdescript="Forward Slash"),
-        "Dolly":
+        "dollar sign":
             R(Text("$"), rdescript="Dollar Sign"),
         "modulo":
             R(Key("percent"), rdescript="Percent Sign"),
-        'tabby [<npunc>]':
-            R(Key("tab"), rdescript="Tab")*Repeat(extra="npunc"),
+        'tabby [<direction>] [<npunc>]':
+            R(Key("%(direction)s" + "tab"), rdescript="Tab")*Repeat(extra="npunc"),
         "boom":
             R(Text(", "), rdescript="Comma + Space"),
         "ampersand":
             R(Key("ampersand"), rdescript="Ampersand"),
         "tilde":
-            R(Key("tilde"), rdescript="Tilde"),
-
+            R(Key("tilde")),
+        "back tick":
+            R(Key("backtick")),
 
     }
 
     extras = [
         IntegerRefST("npunc", 0, 10),
         Choice("long", {
-              "long": " ",
+            "long": " ",
         }),
-
+        Choice("direction", {
+                "lease": "s-",
+            }),
     ]
     defaults = {
         "npunc": 1,
         "long": "",
+        "direction": "",
     }
 
 

@@ -158,6 +158,14 @@ _DEFAULT_SETTINGS = {
         "WXPYTHON_PATH": "C:/Python27/Lib/site-packages/wx-3.0-msw"
     },
 
+    "core": {
+         "alphabet": True,
+         "navigation": True,
+         "numbers": True,
+         "punctuation": True,
+         "mine": True,
+    },
+
     # Apps Section
     "apps": {
         "atom": True,
@@ -173,6 +181,7 @@ _DEFAULT_SETTINGS = {
         "foxitreader": True,
         "gitbash": True,
         "gitter": True,
+        "lyx": True,
         "kdiff3": True,
         "douglas": True,
         "legion": True,
@@ -189,6 +198,9 @@ _DEFAULT_SETTINGS = {
         "visualstudiocode": True,
         "winword": True,
         "wsr": True,
+        "photoshop": True,
+        "TeXworks": True,
+        "filedialogue": True,
     },
 
     # feature switches

@@ -4,7 +4,6 @@ from caster.lib.actions import Text
 from caster.ccr.bash.bash import Bash
 from caster.ccr.java.java import Java
 from caster.ccr.python.python import Python
-from caster.ccr.recording.alias import ChainAlias
 from caster.ccr.standard import SymbolSpecs
 from caster.lib.dfplus.merge.ccrmerger import CCRMerger
 from caster.lib.dfplus.merge.filter import make_filter, there_is_spec_overlap, incoming_gets_priority

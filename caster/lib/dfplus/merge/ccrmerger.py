@@ -36,7 +36,7 @@ def app_merge(mp):
 
 
 class CCRMerger(object):
-    CORE = ["alphabet", "navigation", "numbers", "punctuation"]
+    CORE = [pronunciation for pronunciation, on in settings.SETTINGS["core"].iteritems() if on]
     _GLOBAL = "global"
     _APP = "app"
     _SELFMOD = "selfmod"

@@ -19,7 +19,6 @@ DIRECTION_STANDARD = {
     "dunce [E]": "down",
     "lease [E]": "left",
     "Ross [E]": "right",
-    "back": "left"
 }
 '''
 Note: distinct token types were removed because
@@ -87,13 +86,13 @@ def mouse_alternates(mode, nexus, monitor=1):
         utilities.availability_message(mode.title(), "PIL")
 
 
-def stoosh_keep_clipboard(nnavi500, nexus):
+def stoosh_keep_clipboard(nnavi500, nexus, key="c"):
     if nnavi500 == 1:
-        Key("c-c").execute()
+        Key("c-" + key).execute()
     else:
         max_tries = 20
         cb = Clipboard(from_system=True)
-        Key("c-c").execute()
+        Key("c-" + key).execute()
         key = str(nnavi500)
         for i in range(0, max_tries):
             failure = False
@@ -110,29 +109,6 @@ def stoosh_keep_clipboard(nnavi500, nexus):
                 break
         cb.copy_to_system()
 
-
-def cut_keep_clipboard(nnavi500, nexus):
-    if nnavi500 == 1:
-        Key("c-x").execute()
-    else:
-        max_tries = 20
-        cb = Clipboard(from_system=True)
-        Key("c-x").execute()
-        key = str(nnavi500)
-        for i in range(0, max_tries):
-            failure = False
-            try:
-                # time for keypress to execute
-                time.sleep(settings.SETTINGS["miscellaneous"]["keypress_wait"]/1000.)
-                nexus.clip[key] = Clipboard.get_system_text()
-                utilities.save_toml_file(
-                    nexus.clip, settings.SETTINGS["paths"]["SAVED_CLIPBOARD_PATH"])
-            except Exception:
-                failure = True
-                utilities.simple_log()
-            if not failure:
-                break
-        cb.copy_to_system()
 
 
 def drop_keep_clipboard(nnavi500, nexus, capitalization, spacing):

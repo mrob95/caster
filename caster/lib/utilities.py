@@ -18,6 +18,8 @@ from _winreg import (CloseKey, ConnectRegistry, HKEY_CLASSES_ROOT,
     HKEY_CURRENT_USER, OpenKey, QueryValueEx)
 
 from dragonfly.windows.window import Window
+from dragonfly import Choice
+
 
 try:  # Style C -- may be imported into Caster, or externally
     BASE_PATH = os.path.realpath(__file__).split("\\caster\\")[0].replace("\\", "/")
@@ -30,6 +32,23 @@ finally:
 # checked to see when a new file name had appeared
 FILENAME_PATTERN = re.compile(r"[/\\]([\w_ ]+\.[\w]+)")
 
+'''
+Takes a choice name and an arbitrary number of toml path/label
+pair lists. For example:
+mapping["<alphanumeric>"] = Text("%(alphanumeric)s")
+extras = [
+    utilities.Choice_from_file("alphanumeric",
+     ["caster/.../alphabet.toml", "letters"], 
+     ["caster/.../alphabet.toml", "numbers"]
+     )
+]
+'''
+def Choice_from_file(name, *args):
+    phrases = {}
+    for arg in args:
+        path = BASE_PATH + "/" + arg[0]
+        phrases.update(load_toml_file(path)[arg[1]])
+    return Choice(name, phrases)
 
 def window_exists(classname, windowname):
     try:

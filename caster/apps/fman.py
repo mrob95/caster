@@ -1,5 +1,5 @@
-from dragonfly import (Grammar, Pause, Choice)
-
+from dragonfly import (Grammar, MappingRule,
+                       Pause, Choice, Function)
 from caster.lib.actions import Key, Text
 from caster.lib.context import AppContext
 
@@ -9,24 +9,29 @@ from caster.lib.dfplus.merge import gfilter
 from caster.lib.dfplus.merge.mergerule import MergeRule
 from caster.lib.dfplus.state.short import R
 
+
 class fmanRule(MergeRule):
     pronunciation = "F man"
 
     mapping = {
+        "select all":
+            R(Key("c-a")),
         "copy":
             R(Key("f5")),
         "deselect":
             R(Key("c-d")),
         "edit":
             R(Key("f4")),
+        "end":
+            R(Key("end")),
         "explorer":
             R(Key("f10")),
-        # Set these yourself and add them to the Choice at the bottom
-        # Requires the favourites plug-in
         "go <fav>":
             R(Key("c-0") + Pause("15") + Text("%(fav)s") + Key("enter")),
         "go see":
             R(Key("c-p") + Pause("15") + Text("c") + Key("enter")),
+        "go external":
+            R(Key("c-p") + Pause("15") + Text("e") + Key("enter")),
         "go to":
             R(Key("c-p")),
         "move":
@@ -47,7 +52,7 @@ class fmanRule(MergeRule):
             R(Key("s-f6")),
         "search":
             R(Key("cs-f")),
-        "set favourite":
+        "(set | add) favourite":
             R(Key("s-f")),
         "show favourites":
             R(Key("c-0")),
@@ -59,19 +64,26 @@ class fmanRule(MergeRule):
             R(Key("c-f2")),
         "sort [by] (modified | date)":
             R(Key("c-f3")),
-        "(stoosh | copy) path":
+        "stoosh path":
             R(Key("f11")),
         "terminal":
             R(Key("f9")),
         "command pallette":
             R(Key("cs-p")),
 
+
     }
 
     extras = [
         IntegerRefST("num", 1, 4),
         Choice("fav", {
-            "example favourite":"ef",
+            "advent": "adv",
+            "(docks | documents)":"docs",
+            "(downs | download)":"downs",
+            "git caster":"gcast",
+            "mike":"mike",
+            "user caster":"ucast",
+            "uni [work]":"uni",
         }),
     ]
     defaults = {

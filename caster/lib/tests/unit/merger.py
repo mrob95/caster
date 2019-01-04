@@ -6,7 +6,6 @@ from caster.lib.actions import Key
 from caster.ccr.bash.bash import Bash
 from caster.ccr.java.java import Java
 from caster.ccr.python.python import Python
-from caster.ccr.recording.alias import ChainAlias
 from caster.ccr.standard import SymbolSpecs
 from caster.lib.dfplus.merge.ccrmerger import CCRMerger
 from caster.lib.dfplus.merge.mergepair import MergeInf
@@ -36,7 +35,6 @@ class TestMerger(TestNexus):
         self.nexus.merger.add_global_rule(Python(ID=self.PYTHON_ID))
         self.nexus.merger.add_global_rule(Java())
         self.nexus.merger.add_global_rule(Bash())
-        self.nexus.merger.add_selfmodrule(ChainAlias(self.nexus))
         self.nexus.merger.add_app_rule(EclipseCCR(), eclipse.context)
         self.nexus.merger.add_filter(demo_filter)
         self.nexus.merger.update_config()

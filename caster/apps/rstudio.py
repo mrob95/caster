@@ -2,12 +2,13 @@
 Mike Roberts 13/09/18
 '''
 
-from dragonfly import (Dictation, Grammar, IntegerRef, MappingRule, Pause,
-                       Repeat, Mimic)
-
-from caster.lib import control, settings
+from dragonfly import (Dictation, Grammar, IntegerRef, MappingRule,
+                       Pause, Repeat)
+from dragonfly.actions.action_mimic import Mimic
 from caster.lib.actions import Key, Text
 from caster.lib.context import AppContext
+
+from caster.lib import control, settings
 from caster.lib.dfplus.additions import IntegerRefST
 from caster.lib.dfplus.merge import gfilter
 from caster.lib.dfplus.merge.mergerule import MergeRule
@@ -36,36 +37,41 @@ class RStudioRule(MergeRule):
     "focus main":
         R(Key("c-1"), rdescript="RStudio: Focus Main"),
 
-    "next tab":
-        R(Key("c-f12"), rdescript="RStudio: Next Tab"),
-    "first tab":
-        R(Key("cs-f11"), rdescript="RStudio: First Tab"),
-    "previous tab":
-        R(Key("c-f11"), rdescript="RStudio: Previous Tab"),
-    "last tab":
-        R(Key("cs-f12"), rdescript="RStudio: Last Tab"),
-    "close tab":
-        R(Key("c-w"), rdescript="RStudio: Close Tab"),
+    "next pane":
+        R(Key("c-f12"), rdescript="RStudio: Next pane"),
+    "first pane":
+        R(Key("cs-f11"), rdescript="RStudio: First pane"),
+    "previous pane":
+        R(Key("c-f11"), rdescript="RStudio: Previous pane"),
+    "last pane":
+        R(Key("cs-f12"), rdescript="RStudio: Last pane"),
+    "close pane":
+        R(Key("c-w"), rdescript="RStudio: Close pane"),
 
 
-    "run line":
+    "run (line | that)":
         R(Key("c-enter"), rdescript="RStudio: Run Line"),
     "run document":
         R(Key("ac-r"), rdescript="RStudio: Run Document"),
     "comment (line | selected)":
         R(Key("cs-c"), rdescript="RStudio: Comment Line"),
+    "knit (document | file)":
+        R(Key("cs-k")),
 
     "next plot":
         R(Key("ac-f12"), rdescript="RStudio: Next Plot"),
     "previous plot":
         R(Key("ac-f11"), rdescript="RStudio: Previous Plot"),
+
+    "help":
+        R(Key("c-c, c-2, question, c-v, enter, c-1")),
     }
     extras = [
         IntegerRefST("n", 1, 10000),
     ]
     defaults = {}
 
-context = AppContext(executable="rstudio", title="RStudio")
+context = AppContext(executable="rstudio")
 grammar = Grammar("RStudio", context=context)
 if settings.SETTINGS["apps"]["rstudio"]:
     if settings.SETTINGS["miscellaneous"]["rdp_mode"]:

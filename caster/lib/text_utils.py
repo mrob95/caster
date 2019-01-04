@@ -4,12 +4,12 @@ import time
 from caster.lib.actions import Key, Text
 from caster.lib import settings, context
 
-def master_text_nav(mtn_mode, mtn_dir, nnavi500, extreme):
+def master_text_nav(mtn_mode, mtn_dir, nnavi50, extreme):
     '''
-    (<mtn_dir> | <mtn_mode> [<mtn_dir>]) [(<nnavi500> | <extreme>)]
+    (<mtn_dir> | <mtn_mode> [<mtn_dir>]) [(<nnavi50> | <extreme>)]
     mtn_mode: "shin" s, "queue" cs, "fly" c, (default None)
     mtn_dir: 0-up, 1-down, 2-left, 3-right, (default right)
-    nnavi500: number of keypresses (default 1)
+    nnavi50: number of keypresses (default 1)
     extreme: home/end (default None)
     '''
 
@@ -25,9 +25,9 @@ def master_text_nav(mtn_mode, mtn_dir, nnavi500, extreme):
             elif mtn_dir == "down":
                 k = "c-end"
         else:
-            k = str(mtn_dir) + "/5:" + str(nnavi500)
+            k = str(mtn_dir) + ":" + str(nnavi50)
     elif extreme is None:
-        k = str(mtn_mode) + "-" + str(mtn_dir) + "/5:" + str(nnavi500)
+        k = str(mtn_mode) + "-" + str(mtn_dir) + ":" + str(nnavi50)
     else:
         mtn_dir = str(mtn_dir)
         way = "end" if mtn_dir in ["right", "down"] else "home"
