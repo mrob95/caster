@@ -1,7 +1,6 @@
 # Ignore junk
 .idea/
 *.pyc
-*.toml
 *.wav
 *.class
 test.py
