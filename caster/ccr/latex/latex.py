@@ -108,6 +108,9 @@ class LaTeX(MergeRule):
         #     "wrap figure": "wrapfig",
         # }, path="C:/Users/Mike/Documents/NatLink/ud2/caster/ccr/latex/test.toml")),
 
+        # "<index_operator> from":R(Text("\%(index_operator)s _")),
+        # "until": R(Key("right, caret")),
+
     }
 
     extras = [

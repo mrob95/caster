@@ -21,7 +21,7 @@ command_sets = {
     "markdown.markdown":("Markdown", ),
     "python.python": ("Python", ),
     # "python.python_data":("PythonData", ),
-    "r.r": ("Rlang", ),
+    "r.r2": ("Rlang", ),
     # "rust.rust": ("Rust", ),
     "sql.sql": ("SQL", ),
     # "prolog.prolog": ("Prolog", ),

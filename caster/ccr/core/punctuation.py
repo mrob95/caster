@@ -7,7 +7,6 @@ from caster.lib.dfplus.merge.ccrmerger import CCRMerger
 from caster.lib.dfplus.merge.mergerule import MergeRule
 from caster.lib.dfplus.state.short import R
 
-
 class Punctuation(MergeRule):
     pronunciation = "punctuation"
 

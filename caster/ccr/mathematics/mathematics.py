@@ -25,11 +25,12 @@ def matrix(rows, cols):
     Mouse("[100, 150], left/100").execute()
     Key(str(rows) + "/50, tab, " + str(cols) + "/50, enter").execute()
 
-
 class mathematics(MergeRule):
     pronunciation = "mathematics"
 
     mapping = {
+        "<wnKK>":R(Text("%(wnKK)s")),
+
         "<symbol>":
             R(Function(texchar, extra={"symbol"})),
         #
@@ -42,38 +43,34 @@ class mathematics(MergeRule):
         "matrix <rows> by <cols>":
             R(Function(matrix)),
 
-        "toggle math":
-            R(Key("c-m")),
-        "toggle text":
-            R(Key("c-t")),
-        "fraction":
-            R(Key("c-f")),
-        "radical":
-            R(Key("c-r")),
-        "super [script]":
-            R(Key("c-h")),
-        "sub [script]":
-            R(Key("c-l")),
-        "integral":
-            R(Key("c-i")),
-        "summation":
-            R(Key("c-7")),
-        "squared":
-            R(Key("c-h, 2, right")),
-        "prime":
-            R(Key("apostrophe")),
+        "is less equal": R(Key("ctrl:down, l, e, q,  ctrl:up")),
+        "is less than": R(Text("<")),
+        "is greater equal": R(Key("ctrl:down, g, e, q,  ctrl:up")),
+        "is greater than": R(Text(">")),
+        "is not equal": R(Key("ctrl:down, n, e, q,  ctrl:up")),
+        "limit": R(Key("l, l, i, m, left, down")),
+        "probability": R(Key("P, c-0")),
+        "absolute": R(Text("||") + Key("left")),
+        "inverse": R(Key("c-h, minus, 1, right")),
 
-        "parens":
-            R(Key("c-0")),
-        "squares":
-            R(Key("c-6")),
+        "toggle math":R(Key("c-m")),
+        "toggle text":R(Key("c-t")),
+        "fraction":R(Key("c-f")),
+        "(radical | root)":R(Key("c-r")),
+        "super [script]":R(Key("c-h")),
+        "sub [script]":R(Key("c-l")),
+        "integral":R(Key("c-i")),
+        "summation":R(Key("c-7")),
+        "squared":R(Key("c-h, 2, right")),
+        "prime":R(Key("apostrophe")),
 
-        "beta":
-            R(Key("c-g, b")),
-        "epsilon":
-            R(Key("c-g, e")),
-        "sigma":
-            R(Key("c-g, s")),
+        "parens":R(Key("c-0")),
+        "squares":R(Key("c-6")),
+
+        "beta":R(Key("c-g, b")),
+        "epsilon":R(Key("c-g, e")),
+        "sigma":R(Key("c-g, s")),
+
 
 
     }
@@ -81,6 +78,7 @@ class mathematics(MergeRule):
     extras = [
         IntegerRefST("rows", 1, 6),
         IntegerRefST("cols", 1, 6),
+        IntegerRefST("wnKK", 1, 10),
         Choice("greek", {
             "alpha":"a", "beater":"b", "gamma":"g", "delta":"d", "epsilon":"e",
             "zita":"z", "eater":"h", "theta":"y", "iota":"i", "kappa":"k",
