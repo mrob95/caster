@@ -64,7 +64,7 @@ class LaTeX(MergeRule):
         "[use] package [<packopts>]":
             R(Function(packages, extra={"packopts"}), rdescript="LaTeX: Import packages"),
         #
-        "[<big>] <symbol>":
+        "symbol [<big>] <symbol>":
             R(Text("\\") + Function(symbol_letters, extra={"big", "symbol"}) + Key("space"),
               rdescript="LaTeX: Insert symbols"),
         #
@@ -114,7 +114,7 @@ class LaTeX(MergeRule):
     }
 
     extras = [
-        utilities.Choice_from_file("packopts", ["caster/ccr/latex/latex.toml", "packopts"]),
+        utilities.Choice_from_file("packopts", [utilities.get_full_path("caster/ccr/latex/latex.toml"), "packopts"]),
         # Choice("packopts", {
         #     "bib latex":("[style=authoryear]", "biblatex"),
         #     "colour":"color",
@@ -243,7 +243,7 @@ class LaTeX(MergeRule):
         #         "left": "left(",
         #         "right": "right)",
         #     }),
-        utilities.Choice_from_file("symbol", ["caster/ccr/latex/latex.toml", "symbol"]),
+        utilities.Choice_from_file("symbol", [utilities.get_full_path("caster/ccr/latex/latex.toml"), "symbol"]),
         Choice("big", {
             "big": "big",
         }),

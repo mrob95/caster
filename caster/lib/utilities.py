@@ -38,17 +38,19 @@ pair lists. For example:
 mapping["<alphanumeric>"] = Text("%(alphanumeric)s")
 extras = [
     utilities.Choice_from_file("alphanumeric",
-     ["caster/.../alphabet.toml", "letters"], 
-     ["caster/.../alphabet.toml", "numbers"]
+     [utilities.get_full_path("caster/.../alphabet.toml"), "letters"], 
+     [utilities.get_full_path("caster/.../alphabet.toml"), "numbers"]
      )
 ]
 '''
 def Choice_from_file(name, *args):
     phrases = {}
     for arg in args:
-        path = BASE_PATH + "/" + arg[0]
-        phrases.update(load_toml_file(path)[arg[1]])
+        phrases.update(load_toml_file(arg[0])[arg[1]])
     return Choice(name, phrases)
+
+def get_full_path(path):
+    return BASE_PATH + "/" + path
 
 def window_exists(classname, windowname):
     try:
@@ -140,6 +142,8 @@ def remote_debug(who_called_it=None):
         print("ERROR: " + who_called_it +
               " called utilities.remote_debug() but the debug server wasn't running.")
 
+def kill_notepad():
+    Popen(get_full_path("caster/bin/notepad_kill.bat"))
 
 def reboot(wsr=False):
     popen_parameters = []

@@ -28,6 +28,7 @@ command_sets = {
     # "vhdl.vhdl": ("VHDL", ),
     # "hearthstone.hearthstone": ("Hearthstone", ),
     "mathematics.mathematics": ("mathematics", ),
+    "mathematics.lyx_mathematics": ("lyx_mathematics", ),
 }
 
 # files_list = [f for f in os.listdir(os.getcwd()) if not (f.endswith('.py') or f.endswith('.pyc')) and not in ["__pycache__", "recording"]]

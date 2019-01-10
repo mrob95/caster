@@ -1,0 +1,196 @@
+"greek_prefix" = "greek"
+"capitals_prefix" = "big"
+"symbol1_prefix" = ""
+"symbol2_prefix" = "symbol"
+"text_prefix" = "text"
+"number_prefix" = ""
+
+[numbers]
+"one" = "1"
+"two" = "2"
+"three" = "3"
+"four" = "4"
+"five" = "5"
+"six" = "6"
+"seven" = "7"
+"eight" = "8"
+"nine" = "9"
+
+[greek_letters]
+"alpha" = "alpha"
+"beater" = "beta"
+"gamma" = "gamma"
+"delta" = "delta"
+"epsilon" = "varepsilon"
+"zita" = "zeta"
+"eater" = "eta"
+"theta" = "theta"
+"iota" = "iota"
+"kappa" = "kappa"
+"lambda" = "lambda"
+"mu" = "mu"
+"new" = "nu"
+"zee" = "xi"
+"pie" = "pi"
+"row" = "rho"
+"sigma" = "sigma"
+"tau" = "tau"
+"upsilon" = "upsilon"
+"phi" = "phi"
+"chi" = "chi"
+"sigh" = "psi"
+"omega" = "omega"
+
+
+[tex_symbols1]
+# operators
+"root" = "sqrt"
+"generic root" = "root"
+"integral" = "int"
+"double integral" = "iint"
+"triple integral" = "iiint"
+"times" = "times"
+"divide" = "div"
+"plus or minus" = "pm"
+"partial" = "partial"
+# fractions and related things in the lyx fractions menu
+"(nice frack | nice fraction)" = "nicefrac"
+"binomial" = "binom"
+# functions
+"arc cosine" = "arccos"
+"arc sine" = "arcsin"
+"arc tan" = "arctan"
+"argument" = "arg"
+"cosine" = "cos"
+"hyperbolic cosine" = "cosh"
+"hyperbolic cotangent" = "coth"
+"cosecant" = "csc"
+"degree" = "deg"
+"determinant" = "det"
+"dimension" = "dim"
+"exponential" = "exp"
+"natural (log | logarithm)" = "ln"
+"logarithm" = "log"
+"maximum" = "max"
+"minimum" = "min"
+"secant" = "sec"
+"sine" = "sin"
+"hyperbolic sine" = "sinh"
+"supremum" = "sup"
+"tangent" = "tan"
+"cotangent" = "cot"
+"hyperbolic tangent" = "tanh"
+"probability" = "Pr"
+# misc
+"infinity" = "infty"
+"dot dot dot" = "dots"
+"member" = "in"
+"for all" = "forall"
+"[is] not equal [to]" = "neq"
+"is greater [than] [or] equal [to]" = "geq"
+"is less [than] [or] equal [to]" = "leq"
+#
+"left arrow" = "leftarrow"
+"right arrow" = "rightarrow"
+"up arrow" = "uparrow"
+"down arrow" = "downarrow"
+"left right arrow" = "leftrightarrow"
+
+
+[tex_symbols2]
+"intersection" = "cap"
+"union" = "cup"
+"stop" = "cdot"
+"GCD" = "gcd"
+"cat hom" = "hom"
+"infimum" = "inf"
+"kernel" = "ker"
+"limit infimum" = "liminf"
+"(direct sum | oh plus)" = "oplus"
+"(large direct sum | large oh plus)" = "bigoplus"
+"beemod" = "bmod"  ## i'm not familiar with this one
+"unit" = "unitone"
+"unit two" = "unittwo"
+"unit fraction " = "unitfrac"
+"text fraction" = "tfrac"
+"display fraction" = "dfrac"
+"continued fraction" = "cfrac"
+"continued fraction (left)" = "cfracleft"
+"continued fraction (right)" = "cfracright"
+"text binomial" = "tbinom"
+"display binomial" = "dbinom"
+# relations
+"subset" = "subset" 
+"superset" = "supset"
+"strict subset" = "subsetneq"
+"strict superset" = "supsetneq"
+"preck" = "prec"
+"preck equals" = "preceq"
+"suck" = "succ"
+"suck equals" = "succeq"
+"approximate" = "approx"
+"proportional" = "propto"
+# logic
+"(land|logic and)" = "land" 
+"logic or" = "lor"
+"primer" = "prime"
+"logic not" = "lnot" 
+"there exists" = "exists" 
+
+
+[text_modes]
+"roman" = "mathrm"
+"bold" = "mathbf"
+"sans serif" = "mathsf"
+"italic" = "mathit"
+"typewriter" = "mathtt"
+# math fonts
+# "normal" = "textrm"
+# "(beebee|blackboard bold | blackboard)" = "mathbb"
+# "bold symbol" = "boldsymbol"
+# "fraktur" = "mathfrak"
+# "calligraphic" = "mathcal"
+# "formal script" = "mathscr"
+
+[misc_lyx_keys]
+"math mode" = "c-m"
+"new line" = "escape:10, end, enter, c-m"
+"fraction" = "a-m, f"
+"over" = "cs-left, a-m, f, down"
+"(super [script] | to the power)" = "caret"
+"sub [script]" = "underscore"
+"squared" = "caret, 2, right"
+"cubed" = "caret, 3, right"
+"inverse" = "caret, minus, 1, right"
+"(parens)" = "a-m, lparen"
+"(square brackets)" = "a-m, lbracket"
+"(curly brackets)" = "a-m, lbrace"
+"absolute" = "a-m, bar"
+"prime" = "apostrophe"
+#
+"accent hat" = "a-m, h"
+"accent tilde" = "a-m, ampersand"
+"accent dot" = "a-m, dot"
+"accent double dot" = "a-m, dquote"
+"accent bar" = "a-m, minus"
+
+# Alternates between executing as text and executing as keys
+[misc_lyx_commands]
+"summation" = ["\\overset \\underset \\sum ", "down"]
+"(summation | sum) to N" = ["\\overset \\underset \\sum ", "down"]
+"product" = ["\\overset \\underset \\prod ", "up, n, down:2"]
+"limit" = ["\\underset \\lim ", "down"]
+"label above" = "\\overset "
+"label below" = "\\underset "
+
+
+[denominators]
+"(half | halves)" = 2
+"(third | thirds)" = 3
+"(quarter | quarters | fourth | fourths)" = 4
+"(fifth | fifths)" = 5
+"(sixth | sixths)" = 6
+"(seventh | sevenths)" = 7
+"(eighth | eighths)" = 8
+"(ninth | ninths)" = 9
+"(tenth | tenths)" = 10

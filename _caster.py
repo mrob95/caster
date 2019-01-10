@@ -111,7 +111,11 @@ class MainRule(MergeRule):
             R(Function(_NEXUS.merger.selfmod_rule_changer(), save=True),
               rdescript="Toggle sm-CCR Module"),
 
+        "enable caster": Function(_NEXUS.merger.merge, time=MergeInf.RUN, name="numbers"),
+        "disable caster": Function(_NEXUS.merger.ccr_off),
         
+        "close all notepads": Function(utilities.kill_notepad),
+
     }
     extras = [
         IntegerRefST("n", 1, 50),

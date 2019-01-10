@@ -86,7 +86,7 @@ class SublimeRule(MergeRule):
         "close tab":   R(Key("c-w"), rdescript="Sublime: Close Window"),
         "next tab":    R(Key("c-pgdown"), rdescript="Sublime: Next Tab"),
         "previous tab":    R(Key("c-pgup"), rdescript="Sublime: Previous Tab"),
-        "tab <n2>":    R(Key("a-%(n2)s"), rdescript="Sublime: Tab n"),
+        "<nth> tab":    R(Key("a-%(n2)s"), rdescript="Sublime: Tab n"),
         #
         "column <cols>":    R(Key("as-%(cols)s"), rdescript="Sublime: Column"),
         "focus <panel>":    R(Key("c-%(panel)s"), rdescript="Sublime: Focus Panel n"),
@@ -105,6 +105,18 @@ class SublimeRule(MergeRule):
         IntegerRefST("n12", 0, 100),
         IntegerRefST("n2", 1, 9),
         IntegerRefST("n3", 1, 21),
+        Choice("nth", {
+            "first": "1",
+            "second": "2",
+            "third": "3",
+            "fourth": "4",
+            "fifth": "5",
+            "sixth": "6",
+            "seventh": "7",
+            "eighth": "8",
+            "ninth": "9",
+            "tenth": "10",
+            }),
         Choice("cols", {
             "one": "1",
             "two": "2",

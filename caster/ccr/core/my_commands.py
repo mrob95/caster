@@ -125,7 +125,7 @@ class Mine(MergeRule):
 
 		# "slap":
 		# 	R(Key("c-enter")),
-        "hello world": R(Text("hello <?> world")),
+        # "hello world": R(Text("hello <?> world")),
         # "test hello world": R(Text("blargh ishello <?> world")),
 
 	}

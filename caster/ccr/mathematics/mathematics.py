@@ -52,6 +52,7 @@ class mathematics(MergeRule):
         "probability": R(Key("P, c-0")),
         "absolute": R(Text("||") + Key("left")),
         "inverse": R(Key("c-h, minus, 1, right")),
+        "chi squared": R(Key("c-g, q, c-h, 2, right")),
 
         "toggle math":R(Key("c-m")),
         "toggle text":R(Key("c-t")),
@@ -70,6 +71,7 @@ class mathematics(MergeRule):
         "beta":R(Key("c-g, b")),
         "epsilon":R(Key("c-g, e")),
         "sigma":R(Key("c-g, s")),
+        "pie":R(Key("c-g, p")),
 
 
 
