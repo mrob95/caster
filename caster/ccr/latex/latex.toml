@@ -1,3 +1,85 @@
+[packages]
+"bib latex" = ["[style=authoryear]", "biblatex"]
+"colour" = "color"
+"math tools" =  "mathtools"
+"multi col" = "multicol"
+"geometry" = "geometry"
+"graphic ex" =  "graphicx"
+"wrap figure" =  "wrapfig"
+
+[document_classes]
+"article" = "article"
+"beamer" = "beamer"
+
+[environments]
+"add margin" = "addmargin"
+"center" = "center"
+"columns" = "columns"
+"description" = "description"
+"document" = "document"
+"(enumerate | numbered list)" = "enumerate"
+"equation" = "equation"
+"figure" = ["figure", "[h!]"]
+"flush left" = "flushleft"
+"flush right" = "flushright"
+"frame" = "frame"
+"(list | itemise)" = "itemize"
+"mini page" = "minipage"
+"multi (cols | columns)" = ["multicols", "{2}"]
+"quotation" = "quotation"
+"quote" = "quote"
+"table" = ["table", "[h!]\n\\centering"]
+"tabular" = ["tabular", "{llll}"]
+"title page" = "titlepage"
+"verbatim" = "verbatim"
+"verse" = "verse"
+"wrap figure" = "wrapfigure"
+
+
+[command]
+"author" = "author"
+"[add] bib resource" = "addbibresource"
+"caption" = "caption"
+"chapter" = "chapter"
+"column" = "column"
+"footnote" = "footnote"
+"footnote text" = "footnotetext[]"
+"graphics path" = "graphicspath"
+"[include] graphics" = "includegraphics[width=1\\textwidth]"
+"label" = "label"
+"new command" = "newcommand{}[]"
+"paragraph" = "paragraph"
+"paren cite" = "parencite"
+"part" = "part"
+"reference" = "ref"
+"renew command" = "renewcommand"
+"sub paragraph" = "subparagraph"
+"(section | heading)" = "section"
+"sub (section | heading)" = "subsection"
+"sub sub (section | heading)" = "subsubsection"
+"text cite" = "textcite"
+"[text] bold" = "textbf"
+"[text] italics" = "textit"
+"[text] slanted" = "textsl"
+"title" = "title"
+"use theme" = "usetheme"
+
+[commandnoarg]
+"centring" = "centering"
+"footnote mark" = "footnotemark[]"
+"horizontal line" = "hline"
+"line break" = "linebreak"
+"[list] item" = "item"
+"make title" = "maketitle"
+"new page" = "newpage"
+"page break" = "pagebreak"
+"print bibliography" = "printbibliography"
+"table of contents" = "tableofcontents"
+"text width" = "textwidth"
+"vertical line" = "vline"
+
+
+
 [symbol]
 "alpha" = "alpha"
 "beater" = "beta"
@@ -133,11 +215,3 @@
 "left" = "left("
 "right" = "right)"
 
-[packopts]
-"bib latex" = ["[style=authoryear]", "biblatex",]
-"colour" = "color"
-"math tools" =  "mathtools"
-"multi col" = "multicol"
-"geometry" = "geometry"
-"graphic ex" =  "graphicx"
-"wrap figure" =  "wrapfig"

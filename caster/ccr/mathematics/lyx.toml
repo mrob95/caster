@@ -44,7 +44,7 @@
 
 [tex_symbols1]
 # operators
-"root" = "sqrt"
+"[square] root" = "sqrt"
 "generic root" = "root"
 "integral" = "int"
 "double integral" = "iint"
@@ -69,7 +69,7 @@
 "determinant" = "det"
 "dimension" = "dim"
 "exponential" = "exp"
-"natural (log | logarithm)" = "ln"
+"(natural (log | logarithm) | log natural)" = "ln"
 "logarithm" = "log"
 "maximum" = "max"
 "minimum" = "min"
@@ -82,6 +82,7 @@
 "hyperbolic tangent" = "tanh"
 "probability" = "Pr"
 # misc
+"there exists" = "exists"
 "infinity" = "infty"
 "dot dot dot" = "dots"
 "member" = "in"
@@ -89,6 +90,7 @@
 "[is] not equal [to]" = "neq"
 "is greater [than] [or] equal [to]" = "geq"
 "is less [than] [or] equal [to]" = "leq"
+"[is] approximately [equal] [to]" = "approx"
 #
 "left arrow" = "leftarrow"
 "right arrow" = "rightarrow"
@@ -120,7 +122,7 @@
 "text binomial" = "tbinom"
 "display binomial" = "dbinom"
 # relations
-"subset" = "subset" 
+"subset" = "subset"
 "superset" = "supset"
 "strict subset" = "subsetneq"
 "strict superset" = "supsetneq"
@@ -128,14 +130,13 @@
 "preck equals" = "preceq"
 "suck" = "succ"
 "suck equals" = "succeq"
-"approximate" = "approx"
 "proportional" = "propto"
 # logic
-"(land|logic and)" = "land" 
+"(land|logic and)" = "land"
 "logic or" = "lor"
 "primer" = "prime"
-"logic not" = "lnot" 
-"there exists" = "exists" 
+"logic not" = "lnot"
+
 
 
 [text_modes]
@@ -176,10 +177,15 @@
 
 # Alternates between executing as text and executing as keys
 [misc_lyx_commands]
-"summation" = ["\\overset \\underset \\sum ", "down"]
-"(summation | sum) to N" = ["\\overset \\underset \\sum ", "down"]
-"product" = ["\\overset \\underset \\prod ", "up, n, down:2"]
+"degrees" = ["^\\circ ", "right"]
+"summation" = ["\\underset \\overset \\sum ", "down"]
+"blank summation" = "\\sum "
+"(summation | sum) to N" = ["\\underset \\overset \\sum ", "up, n, down:2"]
+"product" = ["\\underset \\overset \\prod ", "down"]
+"blank product" = "\\prod "
+"product to N" = ["\\underset \\overset \\prod ", "up, n, down:2"]
 "limit" = ["\\underset \\lim ", "down"]
+"blank limit" = "\\lim "
 "label above" = "\\overset "
 "label below" = "\\underset "
 

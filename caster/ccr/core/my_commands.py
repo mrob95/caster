@@ -111,8 +111,8 @@ class Mine(MergeRule):
         "(eskimo | escape)":
             R(Key("escape")),
 
-        "check":
-        	R(Key("c-enter")),
+        "check [<n>]":
+        	R(Key("c-enter"))*Repeat(extra="n"),
 
         "select all":
             R(Key("c-a")),
@@ -130,6 +130,7 @@ class Mine(MergeRule):
 
 	}
 	extras = [
+        IntegerRefST("n", 1, 10),
 		personal.get_choice(),
         Dictation("textnv"),
 		Choice("sidepunc", {
@@ -162,6 +163,8 @@ class Mine(MergeRule):
             }),
 
 		]
-	defaults = {}
+	defaults = {
+        "n": 1,
+    }
 
 control.nexus().merger.add_global_rule(Mine())

@@ -69,7 +69,7 @@ class lyx_mathematics(MergeRule):
     extras = [
         IntegerRefST("rows", 1, 10),
         IntegerRefST("cols", 1, 10),
-        IntegerRefST("numbers", 1, 500),
+        IntegerRefST("numbers", 0, 500),
         Choice("big", {BINDINGS["capitals_prefix"]: True}),
         Choice("greek_letter", BINDINGS["greek_letters"]),
         Choice("symbol1", BINDINGS["tex_symbols1"]),
