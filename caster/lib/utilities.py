@@ -32,26 +32,6 @@ finally:
 # checked to see when a new file name had appeared
 FILENAME_PATTERN = re.compile(r"[/\\]([\w_ ]+\.[\w]+)")
 
-'''
-Takes a choice name and an arbitrary number of toml path/label
-pair lists. For example:
-mapping["<alphanumeric>"] = Text("%(alphanumeric)s")
-extras = [
-    utilities.Choice_from_file("alphanumeric",
-     [utilities.get_full_path("caster/.../alphabet.toml"), "letters"], 
-     [utilities.get_full_path("caster/.../alphabet.toml"), "numbers"]
-     )
-]
-'''
-def Choice_from_file(name, *args):
-    phrases = {}
-    for arg in args:
-        phrases.update(load_toml_file(arg[0])[arg[1]])
-    return Choice(name, phrases)
-
-def get_full_path(path):
-    return BASE_PATH + "/" + path
-
 def window_exists(classname, windowname):
     try:
         win32ui.FindWindow(classname, windowname)
@@ -59,7 +39,6 @@ def window_exists(classname, windowname):
         return False
     else:
         return True
-
 
 def get_active_window_title(pid=None):
     _pid = win32gui.GetForegroundWindow() if pid is None else pid
@@ -90,6 +69,10 @@ def get_window_title_info():
     return [filename, path_folders, title]
 
 
+def get_full_path(path):
+    return BASE_PATH + "/" + path
+
+
 def save_toml_file(data, path):
     try:
         formatted_data = unicode(toml.dumps(data))
@@ -99,14 +82,19 @@ def save_toml_file(data, path):
         simple_log(True)
 
 
-def load_toml_file(path):
+def load_toml_file(path, backupdict=None):
     result = {}
     try:
         with io.open(path, "rt", encoding="utf-8") as f:
             result = toml.loads(f.read())
     except IOError as e:
         if e.errno == 2:  # The file doesn't exist.
-            save_toml_file(result, path)
+            print(path + " does not exist, recovering...")
+            if backupdict:
+                save_toml_file(backupdict, path)
+                return backupdict
+            else:
+                save_toml_file(result, path)
         else:
             raise
     except Exception:

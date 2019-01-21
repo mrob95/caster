@@ -36,32 +36,10 @@ class Alias(SelfModifyingRule):
         IntegerRefST("n", 1, 50), 
         Dictation("s"),
         Dictation("textnv"),
-        Choice("capitalization", {
-            "yell": 1,
-            "tie": 2,
-            "(Gerrish | camel)": 3,
-            "sing": 4,
-            "laws": 5
-        }),
-        Choice(
-            "spacing", {
-                "gum": 1,
-                "gun": 1,
-                "spine": 2,
-                "snake": 3,
-                "pebble": 4,
-                "incline": 5,
-                "dissent": 6,
-                "descent": 6,
-                "list": 7,
-                "dictionary": 8,
-            }),
                 ]
     defaults = {
         "n": 1,
         "textnv": "",
-        "capitalization": 0,
-        "spacing": 0,
     }
 
     def alias(self, spec):
@@ -88,15 +66,17 @@ class Alias(SelfModifyingRule):
         mapping = {}
         for spec in aliases[Alias.toml_path]:
             mapping[spec] = R(
-                Text(str(aliases[Alias.toml_path][spec])),
-                rdescript="Alias: " + spec)
+                Function(context.paste_string_without_altering_clipboard, 
+                    content=str(aliases[Alias.toml_path][spec])))
+            # R(
+            #     Text(str(aliases[Alias.toml_path][spec])),
+            #     rdescript="Alias: " + spec)
+
         mapping["alias <s>"] = R(
             Function(lambda s: self.alias(s)), rdescript="Create Alias")
         mapping["delete aliases"] = R(
             Function(lambda: delete_all(self, Alias.toml_path)),
             rdescript="Delete Aliases")
-        mapping["vary (<capitalization> <spacing> | <capitalization> | <spacing>) (bow|bowel) <textnv>"] = R(
-            Function(lambda capitalization, spacing, textnv: self.vary(capitalization, spacing, textnv)))
         self.reset(mapping)
 
 

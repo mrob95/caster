@@ -273,7 +273,8 @@ class Navigation(MergeRule):
             "tie": 2,
             "(Gerrish | camel)": 3,
             "sing": 4,
-            "laws": 5
+            "laws": 5,
+            "password": 6,
         }),
         Choice(
             "spacing", {

@@ -173,6 +173,7 @@ class Python(MergeRule):
             "prettify": "prettify()",
         }),
         Choice("fun", {
+            "execute": "execute",
             "(int | inter)": "int",
             "length": "len",
             "range": "range",

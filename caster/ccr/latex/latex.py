@@ -3,16 +3,42 @@ Created on Sep 4, 2018
 
 @author: Mike Roberts
 '''
+import re
 from dragonfly import Function, Choice
 from caster.lib.actions import Key, Text, Mouse
 
 from caster.ccr.standard import SymbolSpecs
-from caster.lib import control, utilities
+from caster.lib import control, utilities, context
 from caster.lib.dfplus.merge.mergerule import MergeRule
 from caster.lib.dfplus.state.short import R
 from caster.user.latex import word_counter
 
 BINDINGS = utilities.load_toml_file(utilities.get_full_path("caster/ccr/latex/latex.toml"))
+
+with open(utilities.get_full_path("caster/ccr/latex/templates.txt"), "r+") as f:
+    titleq = re.compile(r"^\+\+\+(.*)\+\+\+")
+    commentq = re.compile(r"^#.*")
+    current = ""
+    templates = {}
+    for line in f.readlines():
+        commentmatch = commentq.search(line)
+        titlematch = titleq.search(line)
+        if commentmatch:
+            pass
+        elif titlematch:
+            current = titlematch.group(1)
+            templates[current] = ""
+        else:
+            if current:
+                templates[current] += line
+
+def quote():
+    e, text = context.read_selected_without_altering_clipboard(False)
+    if text:
+        Text("``" + text + "\'\'").execute()
+    else:
+        Text("``\'\'").execute()
+        Key("left:2").execute()
 
 # Return \first{second}, if second is empty then end inside the brackets for user input
 def back_curl(first, second):
@@ -73,12 +99,12 @@ class LaTeX(MergeRule):
         "insert <commandnoarg>":
             R(Text("\\%(commandnoarg)s "),
             rdescript="LaTeX: Insert command not requiring an argument"),
-
+        
         "insert my bib resource":
             R(back_curl("addbibresource", "C:/Users/Mike/Documents/1 uni work/bibliography.bib")),
 
         "insert quote":
-            R(Text("``\'\'") + Key("left:2"), rdescript="LaTeX: Insert a quote"),
+            R(Function(quote), rdescript="LaTeX: Insert a quote"),
         #
         "superscript":
             R(Text("^") + Key("lbrace, rbrace, left"), rdescript="LaTeX: Superscript"),
@@ -92,11 +118,12 @@ class LaTeX(MergeRule):
         "(get | show) word count":
             R(Key("c-a") + Function(word_counter.print_count_from_selection) + Key("escape")),
 
-        "insert standard header":
-            R(Text("\\documentclass[12pt, a4paper]{article}\n\n\\usepackage{graphicx}\n\n\\usepackage[english]{babel}\n\n" +
-            "\\usepackage[utf8]{inputenc}\n\n\\usepackage[style=authoryear]{biblatex}\n" +
-            "\\addbibresource{C:/Users/Mike/Documents/1 uni work/bibliography.bib}\n\n\\setlength{\parskip}{1em}\n\\renewcommand{\\baselinestretch}{1.3}")),
+        # "insert standard header":
+        #     R(Text("\\documentclass[12pt, a4paper]{article}\n\n\\usepackage{graphicx}\n\n\\usepackage[english]{babel}\n\n" +
+        #     "\\usepackage[utf8]{inputenc}\n\n\\usepackage[style=authoryear]{biblatex}\n" +
+        #     "\\addbibresource{C:/Users/Mike/Documents/1 uni work/bibliography.bib}\n\n\\setlength{\parskip}{1em}\n\\renewcommand{\\baselinestretch}{1.3}")),
 
+        "insert <template>": R(Text("%(template)s")),
 
     }
 
@@ -110,6 +137,7 @@ class LaTeX(MergeRule):
         Choice("big", {
             "big": "big",
         }),
+        Choice("template", templates),
     ]
     defaults = {
         "big": "",

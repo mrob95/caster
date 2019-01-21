@@ -180,6 +180,7 @@ _DEFAULT_SETTINGS = {
         "fman": True,
         "foxitreader": True,
         "gitbash": True,
+        "github": True,
         "gitter": True,
         "lyx": True,
         "kdiff3": True,

@@ -107,12 +107,7 @@ class Rlang(MergeRule):
         Choice("function", BINDINGS["r_functions"]),
         Choice("ggfun", BINDINGS["r_graph"]),
         Choice("argument", BINDINGS["r_args"]),
-        Choice("modelargs", BINDINGS["r_model"]),
-        # utilities.Choice_from_file("function", ["caster/ccr/r/r.toml", "r_functions"]),
-        # utilities.Choice_from_file("ggfun", ["caster/ccr/r/r.toml", "r_graph"]),
-        # utilities.Choice_from_file("argument", ["caster/ccr/r/r.toml", "r_args"]),
-        # utilities.Choice_from_file("modelargs", ["caster/ccr/r/r.toml", "r_model"]),
-        
+        Choice("modelargs", BINDINGS["r_model"]),        
     ]
     defaults = {}
 

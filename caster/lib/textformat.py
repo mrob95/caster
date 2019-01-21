@@ -32,8 +32,23 @@ class TextFormat():
             capitalization = 5
         if spacing == 0 and capitalization == 3:
             spacing = 1
-        tlen = len(t)
-        if capitalization != 0:
+
+        if capitalization == 6:
+            t = "".join(t.split(" "))
+            punc = "@1/4#9?5%,."
+            j = 0
+            result = []
+            t = t.lower()
+            for i in range(len(t)):
+                if i%2==0:
+                    result.append(punc[j%len(punc)])
+                    j += 1
+                if i%3==0:
+                    result.append(t[i].upper())
+                else:
+                    result.append(t[i])
+            t = "".join(result)
+        elif capitalization != 0:
             if capitalization == 1:
                 t = t.upper()
             elif capitalization == 2:

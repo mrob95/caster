@@ -114,6 +114,8 @@ class MainRule(MergeRule):
         "enable caster": Function(_NEXUS.merger.merge, time=MergeInf.RUN, name="numbers"),
         "disable caster": Function(_NEXUS.merger.ccr_off),
         
+        "rebuild caster": Function(_NEXUS.merger.merge, time=MergeInf.BOOT),
+
         "close all notepads": Function(utilities.kill_notepad),
 
     }
