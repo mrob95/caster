@@ -1,7 +1,2 @@
-geometry = "geometry"
-colour = [ "color", 3,]
-"math tools" = "mathtools"
-"graphic ex" = "graphicx"
-"multi col" = "multicol"
-"bib latex" = [ "[style=authoryear]", "biblatex",]
-"wrap figure" = "wrapfig"
+[test]
+test = "test"

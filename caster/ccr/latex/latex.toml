@@ -1,15 +1,24 @@
 [packages]
+"AMS math" = "amsmath"
 "bib latex" = ["[style=authoryear]", "biblatex"]
 "colour" = "color"
+"geometry" = "geometry"
+"hyper ref" = "hyperref"
+"graphic X" =  "graphicx"
 "math tools" =  "mathtools"
 "multi col" = "multicol"
-"geometry" = "geometry"
-"graphic ex" =  "graphicx"
+"long table" = "longtable"
+"tabular X" = "tabularx"
+"X color" = "xcolor"
 "wrap figure" =  "wrapfig"
 
 [document_classes]
 "article" = "article"
 "beamer" = "beamer"
+"book" = "book"
+"letter" = "letter"
+"proceedings" = "proc"
+"report" = "report"
 
 [environments]
 "abstract" = "abstract"
@@ -30,8 +39,9 @@
 "quotation" = "quotation"
 "quote" = "quote"
 "table" = ["table", "[h!]\n\\centering"]
-"long table" = "longtable"
+"long table" = ["longtable", "{lll}"]
 "tabular" = ["tabular", "{llll}"]
+"tabular X" = ["tabular X", "{l X}"]
 "title page" = "titlepage"
 "verbatim" = "verbatim"
 "verse" = "verse"
@@ -79,6 +89,7 @@
 "page break" = "pagebreak"
 "print bibliography" = "printbibliography"
 "table of contents" = "tableofcontents"
+"text backslash" = "textbackslash"
 "text width" = "textwidth"
 "vertical line" = "vline"
 
@@ -218,3 +229,61 @@
 #
 "left" = "left("
 "right" = "right)"
+
+[templates]
+"standard header" = '''
+\documentclass[12pt, a4paper]{article}
+
+\usepackage{graphicx}
+\usepackage{wrapfigure}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[style=authoryear]{biblatex}
+\addbibresource{C:/Users/Mike/Documents/1 uni work/bibliography.bib}
+
+\setlength{\parskip}{1em}
+\renewcommand{\baselinestretch}{1.3}
+'''
+
+"standard beamer" = '''
+\documentclass{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage[style=authoryear]{biblatex}
+\addbibresource{C:/Users/Mike/Documents/1 uni work/bibliography.bib}
+
+\begin{document}
+\begin{frame}
+\frametitle{}
+
+\end{frame}
+\end{document}
+'''
+"standard (graphic | figure)" = '''
+\begin{figure}[h!]
+\centering
+\label{}
+\includegraphics[width=1\textwidth]{}
+\caption{}
+\end{figure}
+'''
+"standard wrap (graphic | figure)" = '''
+\begin{wrapfigure}{l}{0.5\textwidth}
+\centering
+\label{}
+\includegraphics[width=0.4\textwidth]{}
+\caption{}
+\end{wrapfigure}
+'''
+"standard table" = '''
+\begin{table}[h!]
+\centering
+\label{}
+\begin{tabular}{ccccc}
+&  &  &  & \\
+\hline
+&  &  &  &  \\
+\end{tabular}
+\caption{}
+\end{table}
+'''

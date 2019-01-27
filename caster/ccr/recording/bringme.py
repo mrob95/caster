@@ -127,6 +127,4 @@ class BringRule(SelfModifyingRule):
     defaults = { 'desired_item': ('', ""), 'launch': 'program', 'key': ''}
 
 bring_rule = BringRule()
-#Does not work
-#control.nexus().merger.add_selfmodrule(bring_rule)
 

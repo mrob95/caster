@@ -15,23 +15,6 @@ from caster.user.latex import word_counter
 
 BINDINGS = utilities.load_toml_file(utilities.get_full_path("caster/ccr/latex/latex.toml"))
 
-with open(utilities.get_full_path("caster/ccr/latex/templates.txt"), "r+") as f:
-    titleq = re.compile(r"^\+\+\+(.*)\+\+\+")
-    commentq = re.compile(r"^#.*")
-    current = ""
-    templates = {}
-    for line in f.readlines():
-        commentmatch = commentq.search(line)
-        titlematch = titleq.search(line)
-        if commentmatch:
-            pass
-        elif titlematch:
-            current = titlematch.group(1)
-            templates[current] = ""
-        else:
-            if current:
-                templates[current] += line
-
 def quote():
     e, text = context.read_selected_without_altering_clipboard(False)
     if text:
@@ -137,7 +120,7 @@ class LaTeX(MergeRule):
         Choice("big", {
             "big": "big",
         }),
-        Choice("template", templates),
+        Choice("template", BINDINGS["templates"]),
     ]
     defaults = {
         "big": "",
