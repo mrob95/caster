@@ -1,7 +1,6 @@
 # Ignore junk
 .idea/
 *.pyc
-*.json
 *.wav
 *.class
 test.py
@@ -25,8 +24,16 @@ complexity_report*
 /caster/user
 
 # Ignore Custom Sikuli Scripts
-/caster/asynch/sikuli/scripts
+/caster/lib/asynch/sikuli/scripts
 
 # Ignore SonarQube
 .sonar
 sonar-project.properties
+
+# Ignore Eclipse/Pydev Files
+.project
+.pydevproject
+.settings
+
+# Ignore User Data
+caster/bin/data

@@ -3,7 +3,7 @@
 from __future__ import print_function, unicode_literals
 
 import io
-import json
+import toml
 import os
 import re
 import sys
@@ -18,9 +18,11 @@ from _winreg import (CloseKey, ConnectRegistry, HKEY_CLASSES_ROOT,
     HKEY_CURRENT_USER, OpenKey, QueryValueEx)
 
 from dragonfly.windows.window import Window
+from dragonfly import Choice
+
 
 try:  # Style C -- may be imported into Caster, or externally
-    BASE_PATH = os.path.realpath(__file__).split("\\caster")[0].replace("\\", "/")
+    BASE_PATH = os.path.realpath(__file__).split("\\caster\\")[0].replace("\\", "/")
     if BASE_PATH not in sys.path:
         sys.path.append(BASE_PATH)
 finally:
@@ -30,7 +32,6 @@ finally:
 # checked to see when a new file name had appeared
 FILENAME_PATTERN = re.compile(r"[/\\]([\w_ ]+\.[\w]+)")
 
-
 def window_exists(classname, windowname):
     try:
         win32ui.FindWindow(classname, windowname)
@@ -38,7 +39,6 @@ def window_exists(classname, windowname):
         return False
     else:
         return True
-
 
 def get_active_window_title(pid=None):
     _pid = win32gui.GetForegroundWindow() if pid is None else pid
@@ -69,24 +69,32 @@ def get_window_title_info():
     return [filename, path_folders, title]
 
 
-def save_json_file(data, path):
+def get_full_path(path):
+    return BASE_PATH + "/" + path
+
+
+def save_toml_file(data, path):
     try:
-        formatted_data = unicode(
-            json.dumps(data, sort_keys=True, indent=4, ensure_ascii=False))
+        formatted_data = unicode(toml.dumps(data))
         with io.open(path, "wt", encoding="utf-8") as f:
             f.write(formatted_data)
     except Exception:
         simple_log(True)
 
 
-def load_json_file(path):
+def load_toml_file(path, backupdict=None):
     result = {}
     try:
         with io.open(path, "rt", encoding="utf-8") as f:
-            result = json.loads(f.read())
+            result = toml.loads(f.read())
     except IOError as e:
         if e.errno == 2:  # The file doesn't exist.
-            save_json_file(result, path)
+            print(path + " does not exist, recovering...")
+            if backupdict:
+                save_toml_file(backupdict, path)
+                return backupdict
+            else:
+                save_toml_file(result, path)
         else:
             raise
     except Exception:
@@ -116,12 +124,14 @@ def remote_debug(who_called_it=None):
     if who_called_it is None:
         who_called_it = "An unidentified process"
     try:
-        import pydevd  # @UnresolvedImport
+        import pydevd  # @UnresolvedImport pylint: disable=import-error
         pydevd.settrace()
     except Exception:
         print("ERROR: " + who_called_it +
               " called utilities.remote_debug() but the debug server wasn't running.")
 
+def kill_notepad():
+    Popen(get_full_path("caster/bin/notepad_kill.bat"))
 
 def reboot(wsr=False):
     popen_parameters = []

@@ -2,14 +2,14 @@
 Created on Sep 12, 2015
 
 @author: synkarius
-'''
-'''Standard merge filter: app_merge'''
-
+Standard merge filter: app_merge'''
+from collections import OrderedDict
+from itertools import izip_longest
 from dragonfly.grammar.elements import RuleRef, Alternative, Repetition
 from dragonfly.grammar.grammar_base import Grammar
 from dragonfly.grammar.rule_compound import CompoundRule
 
-from caster.lib import utilities, settings
+from caster.lib import utilities, settings, textformat
 from caster.lib.dfplus.merge import gfilter
 from caster.lib.dfplus.merge.mergepair import MergePair, MergeInf
 from caster.lib.dfplus.merge.mergerule import MergeRule
@@ -36,10 +36,11 @@ def app_merge(mp):
 
 
 class CCRMerger(object):
-    CORE = ["alphabet", "navigation", "numbers", "punctuation"]
+    CORE = [pronunciation for pronunciation, on in settings.SETTINGS["core"].iteritems() if on]
     _GLOBAL = "global"
     _APP = "app"
     _SELFMOD = "selfmod"
+    _ORDER = "enabling_order"
 
     def __init__(self, use_real_config=True):
         self._grammars = [
@@ -66,12 +67,12 @@ class CCRMerger(object):
 
     def save_config(self):
         if self.use_real_config:
-            utilities.save_json_file(self._config,
+            utilities.save_toml_file(self._config,
                                      settings.SETTINGS["paths"]["CCR_CONFIG_PATH"])
 
     def load_config(self):
         if self.use_real_config:
-            self._config = utilities.load_json_file(
+            self._config = utilities.load_toml_file(
                 settings.SETTINGS["paths"]["CCR_CONFIG_PATH"])
         else:
             self._config = {}
@@ -98,8 +99,13 @@ class CCRMerger(object):
             self._config[CCRMerger._SELFMOD] = {}
         for name in self.selfmod_rule_names():
             if not name in self._config[CCRMerger._SELFMOD]:
-                self._config[CCRMerger._SELFMOD][name] = False
+                self._config[CCRMerger._SELFMOD][name] = True
                 changed = True
+
+        # <+>
+        if not "ccr_on" in self._config:
+            self._config["ccr_on"] = True
+            changed = True
 
         if changed: self.save_config()
 
@@ -224,6 +230,40 @@ class CCRMerger(object):
             grammar.disable()
             del grammar
 
+    # <+>
+    def ccr_off(self):
+        self.wipe()
+        self._config["ccr_on"] = False
+        self.save_config()
+
+    def _sync_enabled(self):
+        '''
+        When enabling new rules, conflicting ones get automatically disabled.
+        Throw these out of enabling order as well. Also prevent excessive size.
+        '''
+        if CCRMerger._ORDER not in self._config:
+            self._config[CCRMerger._ORDER] = []
+        enabled = [
+            r for r in self._config[CCRMerger._ORDER] 
+            if self._config[CCRMerger._GLOBAL].get(r)][-100:]
+        self._config[CCRMerger._ORDER] = OrderedDict(izip_longest(enabled, [])).keys()
+
+    def _apply_format(self, name):
+        if name in settings.SETTINGS["formats"]:
+            if 'text_format' in settings.SETTINGS["formats"][name]:
+                cap, spacing = settings.SETTINGS["formats"][name]['text_format']
+                textformat.format.set_text_format(cap, spacing)
+            else:
+                textformat.format.clear_text_format()
+            if 'secondary_format' in settings.SETTINGS["formats"][name]:
+                cap, spacing = settings.SETTINGS["formats"][name]['secondary_format']
+                textformat.secondary_format.set_text_format(cap, spacing)
+            else:
+                textformat.secondary_format.clear_text_format()
+        else:
+            textformat.format.clear_text_format()
+            textformat.secondary_format.clear_text_format()
+
     def merge(self, time, name=None, enable=True, save=False):
         '''combines MergeRules, SelfModifyingRules;
         handles CCR for apps;
@@ -233,7 +273,7 @@ class CCRMerger(object):
         assumptions made: 
         * SelfModifyingRules have already made changes to themselves
         * the appropriate activation boolean(s) in the appropriate map has already been set'''
-
+        current_rule = None
         self.wipe()
         base = self._base_global
         named_rule = None
@@ -256,12 +296,20 @@ class CCRMerger(object):
                     if base is None: base = rule
                     else: base = self._compatibility_merge(mp, base, rule)
         else:  # rebuild via composite
+            # <+>
+            if not self._config["ccr_on"]:
+                self._config["ccr_on"] = True
+                self.save_config()
             composite = base.composite.copy(
             )  # IDs of all rules that the composite rule is made of
             if time != MergeInf.SELFMOD:
-                named_rule = self._global_rules[name] if name is not None else None
-                if enable == False:
+                assert name is not None
+                named_rule = self._global_rules[name]
+                if enable is False:
                     composite.discard(named_rule.ID)  # throw out rule getting disabled
+                else: # enable CCR rule
+                    self._config[CCRMerger._ORDER].append(name)
+                    current_rule = name
             base = None
             for rule in self._get_rules_by_composite(composite):
                 mp = MergePair(time, MergeInf.GLOBAL, base, rule.copy(), False)
@@ -299,8 +347,8 @@ class CCRMerger(object):
             rule.set_context(context)
             active_apps.append(rule)
         '''negation context for appless version of base rule'''
-        contexts = [rule.get_context() for rule in self._app_rules.values() \
-                    if rule.get_context() is not None]# get all contexts
+        contexts = [app_rule.get_context() for app_rule in self._app_rules.values() \
+                    if app_rule.get_context() is not None]# get all contexts
         negation_context = None
         for context in contexts:
             negate = ~context
@@ -337,7 +385,19 @@ class CCRMerger(object):
             for rule_name in self._self_modifying_rules:
                 self._config[CCRMerger._SELFMOD][
                     rule_name] = rule_name in active_selfmod_names
+        self._sync_enabled()
+        if len(self._config[CCRMerger._ORDER]) > 0:
+            current_rule = self._config[CCRMerger._ORDER][-1]
+        if time == MergeInf.BOOT:
+            self._apply_format("_default")
+        else:
+            self._apply_format(current_rule)
+        if save:
             self.save_config()
+        # <+>
+        if time == MergeInf.BOOT and not self._config["ccr_on"]:
+            self.ccr_off()
+
 
     @staticmethod
     def specs_per_rulename(d):

@@ -7,16 +7,16 @@ import random
 import re
 import time
 
-from dragonfly.actions.action_text import Text
 from dragonfly.grammar.elements import Choice
 from dragonfly.grammar.grammar_base import Grammar
 
 from caster.lib import settings
-from caster.lib.ccr.core.alphabet import Alphabet
-from caster.lib.ccr.core.nav import Navigation
-from caster.lib.ccr.core.numbers import Numbers
-from caster.lib.ccr.core.punctuation import Punctuation
-from caster.lib.ccr.python.python import Python
+from caster.lib.actions import Text
+from caster.ccr.core.alphabet import Alphabet
+from caster.ccr.core.nav import Navigation
+from caster.ccr.core.numbers import Numbers
+from caster.ccr.core.punctuation import Punctuation
+from caster.ccr.python.python import Python
 from caster.lib.dfplus.hint.hintnode import NodeRule
 from caster.lib.dfplus.hint.nodes import css
 from caster.lib.dfplus.merge.ccrmerger import CCRMerger
@@ -251,7 +251,7 @@ def run_tests():
                     if result.choices == nc_orig: not_max_yet = False
                     break
 
-    reports.append("\nSettings JSON CCR Max Reps: " + str(original_ccr_max) + "\n")
+    reports.append("\nSettings toml CCR Max Reps: " + str(original_ccr_max) + "\n")
     reports.append(
         "Total time for test: " + str(int(time.time() - start_time)) + " sec\n\n")
     result = "".join(reports)

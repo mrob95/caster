@@ -2,14 +2,14 @@
 
 import collections
 import io
-import json
+import toml
 import os
 import sys
 import errno
 import _winreg
 
 SETTINGS = {}
-_SETTINGS_PATH = os.path.realpath(__file__).split("lib")[0] + "bin\\data\\settings.json"
+_SETTINGS_PATH = os.path.realpath(__file__).split("lib")[0] + "bin\\data\\settings.toml"
 BASE_PATH = os.path.realpath(__file__).split("\\lib")[0].replace("\\", "/")
 
 # title
@@ -37,11 +37,13 @@ HMC_SEPARATOR = "[hmc]"
 WSR = False
 
 
-# Validates 'Engine Path' in settings.json
 def _validate_engine_path():
+    '''
+    Validates path 'Engine Path' in settings.toml
+    '''
     if os.path.isfile(_SETTINGS_PATH):
-        with io.open(_SETTINGS_PATH, "rt", encoding="utf-8") as json_file:
-            data = json.loads(json_file.read())
+        with io.open(_SETTINGS_PATH, "rt", encoding="utf-8") as toml_file:
+            data = toml.loads(toml_file.read())
             engine_path = data["paths"]["ENGINE_PATH"]
             if os.path.isfile(engine_path):
                 return engine_path
@@ -49,21 +51,22 @@ def _validate_engine_path():
                 engine_path = _find_natspeak()
                 data["paths"]["ENGINE_PATH"] = engine_path
                 try:
-                    formatted_data = unicode(
-                        json.dumps(data, sort_keys=True, indent=4, ensure_ascii=False))
-                    with io.open(_SETTINGS_PATH, "w", encoding="utf-8") as json_file:
-                        json_file.write(formatted_data)
-                        print "Setting engine path to " + engine_path
+                    formatted_data = unicode(toml.dumps(data))
+                    with io.open(_SETTINGS_PATH, "w", encoding="utf-8") as toml_file:
+                        toml_file.write(formatted_data)
+                    print("Setting engine path to ") + engine_path
                 except Exception as e:
-                    print "Error saving settings file " + str(e) + _SETTINGS_PATH
+                    print("Error saving settings file ") + str(e) + _SETTINGS_PATH
                 return engine_path
     else:
         return _find_natspeak()
 
 
-# Finds engine 'natspeak.exe' path and verifies supported DNS versions via Windows Registry.
 def _find_natspeak():
-    print "Searching Windows Registry For DNS..."
+    '''
+    Finds engine 'natspeak.exe' path and verifies supported DNS versions via Windows Registry.
+    '''
+    print("Searching Windows Registry For DNS...")
     proc_arch = os.environ['PROCESSOR_ARCHITECTURE'].lower()
     proc_arch64 = os.environ['PROCESSOR_ARCHITEW6432'].lower()
 
@@ -91,7 +94,7 @@ def _find_natspeak():
                 if error.errno == 2:  # Suppresses '[Error 2] The system cannot find the file specified'
                     pass
                 else:
-                    print error
+                    print(error)
             finally:
                 skey.Close()
                 if Publisher == "Nuance Communications Inc." and "Dragon" in DisplayName:
@@ -103,10 +106,11 @@ def _find_natspeak():
                             print "Search Complete."
                             return engine_path
                     else:
-                        print " Dragon Naturally Speaking " + str(
-                            DnsVersion
-                        ) + " is not supported by Caster. Only versions 13 and above are supported. Purchase Dragon Naturally Speaking 13 or above"
-    print "Cannot find dragon engine path"
+                        print(
+                            " Dragon Naturally Speaking " + str(DnsVersion) +
+                            " is not supported by Caster. Only versions 13 and above are supported. Purchase Dragon Naturally Speaking 13 or above"
+                        )
+    print("Cannot find dragon engine path")
     return ""
 
 
@@ -116,32 +120,34 @@ _DEFAULT_SETTINGS = {
         "BASE_PATH": BASE_PATH,
 
         # DATA
-        "ALIAS_PATH": BASE_PATH + "/bin/data/aliases.json.",
-        "CCR_CONFIG_PATH": BASE_PATH + "/bin/data/ccr.json",
+        "BRINGME_PATH": BASE_PATH + "/bin/data/bringme.toml",
+        "BRINGME_DEFAULTS_PATH": BASE_PATH + "/bin/share/bringme.toml.defaults",
+        "ALIAS_PATH": BASE_PATH + "/bin/data/aliases.toml",
+        "CCR_CONFIG_PATH": BASE_PATH + "/bin/data/ccr.toml",
         "DLL_PATH": BASE_PATH + "/lib/dll/",
         "FILTER_DEFS_PATH": BASE_PATH + "/user/words.txt",
         "LOG_PATH": BASE_PATH + "/bin/data/log.txt",
-        "RECORDED_MACROS_PATH": BASE_PATH + "/bin/data/recorded_macros.json",
-        "SAVED_CLIPBOARD_PATH": BASE_PATH + "/bin/data/clipboard.json",
-        "SIKULI_SCRIPTS_FOLDER_PATH": BASE_PATH + "/asynch/sikuli/scripts",
+        "RECORDED_MACROS_PATH": BASE_PATH + "/bin/data/recorded_macros.toml",
+        "SAVED_CLIPBOARD_PATH": BASE_PATH + "/bin/data/clipboard.toml",
+        "SIKULI_SCRIPTS_FOLDER_PATH": BASE_PATH + "/lib/asynch/sikuli/scripts",
 
         # REMOTE_DEBUGGER_PATH is the folder in which pydevd.py can be found
         "REMOTE_DEBUGGER_PATH": "",
 
         # EXECUTABLES
-        "DOUGLAS_PATH": BASE_PATH + "/asynch/mouse/grids.py",
+        "DOUGLAS_PATH": BASE_PATH + "/lib/asynch/mouse/grids.py",
         "ENGINE_PATH": _validate_engine_path(),
-        "HOMUNCULUS_PATH": BASE_PATH + "/asynch/hmc/h_launch.py",
-        "LEGION_PATH": BASE_PATH + "/asynch/mouse/legion.py",
+        "HOMUNCULUS_PATH": BASE_PATH + "/lib/asynch/hmc/h_launch.py",
+        "LEGION_PATH": BASE_PATH + "/lib/asynch/mouse/legion.py",
         "MEDIA_PATH": BASE_PATH + "/bin/media",
-        "RAINBOW_PATH": BASE_PATH + "/asynch/mouse/grids.py",
+        "RAINBOW_PATH": BASE_PATH + "/lib/asynch/mouse/grids.py",
         "REBOOT_PATH": BASE_PATH + "/bin/reboot.bat",
         "REBOOT_PATH_WSR": BASE_PATH + "/bin/reboot_wsr.bat",
-        "SETTINGS_WINDOW_PATH": BASE_PATH + "/asynch/settingswindow.py",
+        "SETTINGS_WINDOW_PATH": BASE_PATH + "/lib/asynch/settingswindow.py",
         "SIKULI_COMPATIBLE_JAVA_EXE_PATH": "",
         "SIKULI_IDE_JAR_PATH": "",
         "SIKULI_SCRIPTS_JAR_PATH": "",
-        "SIKULI_SERVER_PATH": BASE_PATH + "/asynch/sikuli/scripts/xmlrpc_server.sikuli",
+        "SIKULI_SERVER_PATH": BASE_PATH + "/lib/asynch/sikuli/scripts/xmlrpc_server.sikuli",
         "WSR_PATH": "C:/Windows/Speech/Common/sapisvr.exe",
 
         # CCR
@@ -150,6 +156,14 @@ _DEFAULT_SETTINGS = {
         # PYTHON
         "PYTHONW": "C:/Python27/pythonw",
         "WXPYTHON_PATH": "C:/Python27/Lib/site-packages/wx-3.0-msw"
+    },
+
+    "core": {
+         "alphabet": True,
+         "navigation": True,
+         "numbers": True,
+         "punctuation": True,
+         "mine": True,
     },
 
     # Apps Section
@@ -163,9 +177,12 @@ _DEFAULT_SETTINGS = {
         "explorer": True,
         "firefox": True,
         "flashdevelop": True,
+        "fman": True,
         "foxitreader": True,
         "gitbash": True,
+        "github": True,
         "gitter": True,
+        "lyx": True,
         "kdiff3": True,
         "douglas": True,
         "legion": True,
@@ -182,6 +199,9 @@ _DEFAULT_SETTINGS = {
         "visualstudiocode": True,
         "winword": True,
         "wsr": True,
+        "photoshop": True,
+        "TeXworks": True,
+        "filedialogue": True,
     },
 
     # feature switches
@@ -201,19 +221,66 @@ _DEFAULT_SETTINGS = {
         "sikuli_enabled": False,
         "keypress_wait": 50,  # milliseconds
         "max_ccr_repetitions": 16,
-        "atom_palette_wait": "30",
+        "atom_palette_wait": 30,  # hundredths of a second
         "rdp_mode": False,
         "integer_remap_opt_in": False,
         "integer_remap_crash_fix": False,
         "print_rdescripts": False,
         "history_playback_delay_secs": 1.0,
         "legion_vertical_columns": 30,
+        "use_aenea": False,
     },
     "pronunciations": {
         "c++": "C plus plus",
         "jquery": "J query",
     },
-    "one time warnings": {}
+    "one time warnings": {},
+    "formats": {
+        "_default": {
+            "text_format": [5, 0],
+            "secondary_format": [1, 0],
+        },
+        "C plus plus": {
+            "text_format": [3, 1],
+            "secondary_format": [2, 1],
+        },
+        "C sharp": {
+            "text_format": [3, 1],
+            "secondary_format": [2, 1],
+        },
+        "Dart": {
+            "text_format": [3, 1],
+            "secondary_format": [2, 1],
+        },
+        "HTML": {
+            "text_format": [5, 0],
+            "secondary_format": [5, 2],
+        },
+        "Java": {
+            "text_format": [3, 1],
+            "secondary_format": [2, 1],
+        },
+        "Javascript": {
+            "text_format": [3, 1],
+            "secondary_format": [2, 1],
+        },
+        "matlab": {
+            "text_format": [3, 1],
+            "secondary_format": [1, 3],
+        },
+        "Python": {
+            "text_format": [5, 3],
+            "secondary_format": [2, 1],
+        },
+        "Rust": {
+            "text_format": [5, 3],
+            "secondary_format": [2, 1],
+        },
+        "sequel": {
+            "text_format": [5, 3],
+            "secondary_format": [1, 3],
+        },
+    }
 }
 
 
@@ -221,19 +288,18 @@ _DEFAULT_SETTINGS = {
 def _save(data, path):
     '''only to be used for settings file'''
     try:
-        formatted_data = unicode(
-            json.dumps(data, sort_keys=True, indent=4, ensure_ascii=False))
+        formatted_data = unicode(toml.dumps(data))
         with io.open(path, "wt", encoding="utf-8") as f:
             f.write(formatted_data)
-    except Exception:
-        print "Error saving json file: " + path
+    except Exception as e:
+        print "Error saving toml file: " + str(e) + _SETTINGS_PATH
 
 
 def _init(path):
     result = {}
     try:
         with io.open(path, "rt", encoding="utf-8") as f:
-            result = json.loads(f.read())
+            result = toml.loads(f.read())
     except ValueError as e:
         print("\n\n" + repr(e) + " while loading settings file: " + path + "\n\n")
         print(sys.exc_info())
@@ -285,7 +351,7 @@ def report_to_file(message, path=None):
         f.write(unicode(message) + "\n")
 
 
-## Kick everything off.
+# Kick everything off.
 SETTINGS = _init(_SETTINGS_PATH)
 for path in [
         SETTINGS["paths"]["REMOTE_DEBUGGER_PATH"], SETTINGS["paths"]["WXPYTHON_PATH"]
